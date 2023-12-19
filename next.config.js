@@ -1,7 +1,7 @@
 module.exports = {
   reactStrictMode: false,
   images: {
-    // domains: ["api.arifsolar.uz"],
+    domains: ["api.arifsolar.uz", "164.92.117.144"],
     remotePatterns: [
       {
         protocol: "http",

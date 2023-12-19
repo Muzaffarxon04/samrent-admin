@@ -31,7 +31,7 @@ const Page = () => {
   const { pageCount } = useSelector((state) => state.pageCount);
   const [rowsPerPage, setRowsPerPage] = useState(pageCount || 5);
   const [page, setPage] = useState(0);
-  const initalData = data["/mobile/user/all"]?.users;
+  const initalData = data["/leed/all"]?.leeds;
   const [filtered, setFiltered] = useState(initalData || []);
   const customers = useCustomers(filtered, page, rowsPerPage);
 
@@ -75,7 +75,7 @@ const Page = () => {
   );
 
   const getCountries = () => {
-    fetchData(`/mobile/user/all`, "mobile");
+    fetchData(`/leed/all`);
   };
 
   useEffect(() => {
@@ -92,7 +92,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>Users | Melek</title>
+        <title>LEEDS | SAM AVTO RENTAL</title>
       </Head>
       <Box
         component="main"
@@ -105,13 +105,13 @@ const Page = () => {
           <Stack spacing={3}>
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
-                <Typography variant="h4" textTransform={"capitalize"}>{localization.sidebar.users}</Typography>
+                <Typography variant="h4" textTransform={"capitalize"}>{localization.sidebar.leeds}</Typography>
               </Stack>
            
             </Stack>
             <CustomersSearch type="admin" onSearch={onSearch} />
             <CustomersTable
-              type="admin"
+              type="leed"
               extraData={data}
               count={filtered?.length}
               items={customers}

@@ -79,10 +79,7 @@ export default function AddOrderModal({ getDatas, company }) {
   };
   const onFinish = () => {
     formik.values.nameuz = "";
-    formik.values.category_id = ParamId === "all" ? " " : ParamId;
-    formik.values.infouz = "";
-    formik.values.inforu = "";
-    formik.values.infoen = "";
+    formik.values.category_id = "";
     formik.values.nameen = "";
     formik.values.nameru = "";
     formik.values.cost = "";
@@ -90,22 +87,20 @@ export default function AddOrderModal({ getDatas, company }) {
 
   const formik = useFormik({
     initialValues: {
-      category_id: ParamId === "all" ? " " : ParamId ,
+      category_id:"" ,
       nameen: "",
       nameuz: "",
       nameru: "",
-      infouz: "",
-      inforu: "",
-      infoen: "",
       image: "",
       cost: "",
       submit: null,
     },
     validationSchema: Yup.object({
+      category_id: Yup.string().required(" Type is required"),
       nameuz: Yup.string().min(2).required(" Name is required"),
-      nameru: Yup.string().min(2).required(" Name is required"),
-      nameen: Yup.string().min(2).required(" Name is required"),
-      category_id: Yup.string().min(1).required("Category is required"),
+      nameru: Yup.string().min(2).required(" Info is required"),
+      nameen: Yup.number().required(" From days is required"),
+      cost: Yup.number().required(" Cost is required"),
 
     }),
 
@@ -113,19 +108,18 @@ export default function AddOrderModal({ getDatas, company }) {
       try {
 
         const formData = new FormData();
-        image.current?.files[0] && formData.append('image', image.current?.files[0]);
-        formData.append('subCategory_id', values.category_id);
-        formData.append('nameuz', values.nameuz);
-        formData.append('nameen', values.nameen);
-        formData.append('nameru', values.nameru);
-        formData.append('inforu', values.inforu);
-        formData.append('infouz', values.infouz);
-        formData.append('infoen', values.infoen);
+        for (let index = 0; index < image.current?.files?.length; index++) {
+         formData.append('images', image.current?.files[index]);  
+        }
+        formData.append('name', values.nameuz);
+        formData.append('title', values.nameru);
+        formData.append('from', values.nameen);
         formData.append('cost', values.cost);
+        formData.append('type', values.category_id);
        
 
 
-        const response = await fetch(BaseUrl + "/botproduct/create", {
+        const response = await fetch(BaseUrl + "/webcar/create", {
           method: 'POST',
 
           headers: {
@@ -157,13 +151,25 @@ export default function AddOrderModal({ getDatas, company }) {
   });
 
 
-  useEffect(() => {
-    fetchData(`/botcategory/all`);
-    fetchData(`/botsubcategory/all`);
+  const carCategories = [
+    {
+      name: "Standart",
+      value: "Standart",
+    },
+    {
+      name: "Standart",
+      value: "Standart",
+    },
+    {
+      name: "Standart",
+      value: "Standart",
+    },
+    {
+      name: "Standart",
+      value: "Standart",
+    }
+  ]
 
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
 
   return (
@@ -184,7 +190,7 @@ export default function AddOrderModal({ getDatas, company }) {
         open={open}>
         <BootstrapDialogTitle id="customized-dialog-title"
           onClose={handleClose}>
-          {localization.modal.addProduct.addproduct}
+          {localization.modal.addProduct.addproduct} 
         </BootstrapDialogTitle>
         <form noValidate
           onSubmit={formik.handleSubmit}>
@@ -194,39 +200,42 @@ export default function AddOrderModal({ getDatas, company }) {
               <TextField
                 fullWidth
                 name="image"
+                inputProps={{
+                  multiple: true
+                }}
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 type="file"
                 inputRef={image}
               />
 
-              {ParamId === "all"  && <TextField
+              <TextField
                 error={!!(formik.touched.category_id && formik.errors.category_id)}
                 fullWidth
                 select
                 helperText={formik.touched.category_id && formik.errors.category_id}
-                label={localization.table.country}
+                label={localization.sidebar.type}
                 name="category_id"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 type="text"
                 value={formik.values.category_id}
               >
-                {data['/botsubcategory/all']?.subCategories &&
-                  data['/botsubcategory/all']?.subCategories.map((item) => (
-                    <MenuItem key={item?._id}
-                      value={item?._id}>
+                {carCategories &&
+                  carCategories.map((item) => (
+                    <MenuItem key={item?.value}
+                      value={item?.value}>
                       {item?.name}
                     </MenuItem>
                   ))}
-              </TextField>}
+              </TextField>
 
               <TextField
 
                 error={!!(formik.touched.nameuz && formik.errors.nameuz)}
                 fullWidth
                 helperText={formik.touched.nameuz && formik.errors.nameuz}
-                label={localization.table.name + " " + localization.uz}
+                label={localization.table.name }
                 name="nameuz"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
@@ -238,7 +247,7 @@ export default function AddOrderModal({ getDatas, company }) {
                 error={!!(formik.touched.nameru && formik.errors.nameru)}
                 fullWidth
                 helperText={formik.touched.nameru && formik.errors.nameru}
-                label={localization.table.name + " " + localization.ru}
+                label={localization.table.info}
                 name="nameru"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
@@ -249,47 +258,14 @@ export default function AddOrderModal({ getDatas, company }) {
                 error={!!(formik.touched.nameen && formik.errors.nameen)}
                 fullWidth
                 helperText={formik.touched.nameen && formik.errors.nameen}
-                label={localization.table.name + " " + localization.en}
+                label={localization.table.from}
                 name="nameen"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 type="text"
                 value={formik.values.nameen}
               />
-              <TextField
-                error={!!(formik.touched.infouz && formik.errors.infouz)}
-                fullWidth
-                helperText={formik.touched.infouz && formik.errors.infouz}
-
-                label={localization.table.info + " " + localization.uz}
-                name="infouz"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                type="text"
-                value={formik.values.infouz}
-              />
-              <TextField
-                error={!!(formik.touched.inforu && formik.errors.inforu)}
-                fullWidth
-                helperText={formik.touched.inforu && formik.errors.inforu}
-                label={localization.table.info + " " + localization.ru}
-                name="inforu"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                type="text"
-                value={formik.values.inforu}
-              />
-              <TextField
-                error={!!(formik.touched.infoen && formik.errors.infoen)}
-                fullWidth
-                helperText={formik.touched.infoen && formik.errors.infoen}
-                label={localization.table.info + " " + localization.en}
-                name="infoen"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                type="text"
-                value={formik.values.infoen}
-              />
+           
               <TextField
                 error={!!(formik.touched.cost && formik.errors.cost)}
                 fullWidth

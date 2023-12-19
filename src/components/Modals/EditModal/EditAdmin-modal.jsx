@@ -10,13 +10,13 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@heroicons/react/24/solid/XMarkIcon";
 import { SvgIcon, useMediaQuery } from "@mui/material";
 import useFetcher from "src/hooks/use-fetcher";
-import PlusIcon from "@heroicons/react/24/solid/PencilSquareIcon";
-
+import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Box, Button, Stack, TextField, Typography, MenuItem } from "@mui/material";
 import Content from "src/Localization/Content";
 import { useSelector } from "react-redux";
+import { PencilSquareIcon } from "@heroicons/react/24/solid";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -72,23 +72,17 @@ export default function AddClientModal({ getDatas, type, row }) {
     setOpen(false);
   };
 
+
   const formik = useFormik({
     initialValues: {
-      name: {
-        first_name: row.name.first_name || "",
-        last_name: row.name.last_name || ""
-      },
-      login: row.login,
-      role: row.role,
-      password: "",
-      tel_number:row.tel_number,
+      name:row.name,
+      login:row.login,
+      password:"",
+      tel_number: row.tel_number,
       submit: null,
     },
     validationSchema: Yup.object({
-      name: Yup.object({
-        first_name: Yup.string().required('First name is required'),
-        last_name: Yup.string().required('Last name is required')
-      }),
+      name: Yup.string().required(' name is required'),
       login: Yup.string().required('Login is required'),
       tel_number: Yup.number().required('Telephone number is required'),
       password: Yup.string()
@@ -96,21 +90,20 @@ export default function AddClientModal({ getDatas, type, row }) {
           /^(?!.*\s)(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;'<>,.?/_₹]).{6,30}$/,
           'Password must contain at least one uppercase letter, one lowercase letter, one digit, one special character, and be between 6 and 30 characters long'
         )
-        .required('Password is required').min(6)
+       
     }),
 
     onSubmit: async (values, helpers) => {
       try {
         const newData = {
-          name: {
-            first_name: values.name.first_name,
-            last_name: values.name.last_name
-          },
+          name: values.name,
           login: values.login,
           tel_number: values.tel_number,
-          // old_password: Joi.string(),
-          new_password: values.password,
+        
         };
+        if (values.password) {
+          newData.password = values.password;
+        }
         createData(`/admin/${row._id}`, newData, "PATCH", getDatas);
       } catch (err) {
         helpers.setStatus({ success: false });
@@ -121,15 +114,15 @@ export default function AddClientModal({ getDatas, type, row }) {
   });
 
 
-  const admin_roles = ['tasischi', 'moliyachi', 'sotuvchi', 'omborchi', 'prorab', 'taminotchi', 'kassir']
 
 
   return (
-    <>
-   
-      <IconButton onClick={handleClickOpen}>
-        <SvgIcon>
-          <PlusIcon color="green" />
+    <div>
+      <IconButton
+        onClick={handleClickOpen}
+      >
+        <SvgIcon >
+          <PencilSquareIcon />
         </SvgIcon>
       </IconButton>
       <BootstrapDialog
@@ -139,7 +132,7 @@ export default function AddClientModal({ getDatas, type, row }) {
         <BootstrapDialogTitle
           id="customized-dialog-title"
           onClose={handleClose}>
-          {localization.sidebar.edit_admin}
+          {type === "supplier" ? localization.modal.addDeliver.adddeliver : type === "agent" ? localization.modal.addAgent.addagent : localization.sidebar.add_admin}
 
         </BootstrapDialogTitle>
         <form noValidate
@@ -149,30 +142,18 @@ export default function AddClientModal({ getDatas, type, row }) {
               width={matches ? 400 : null}>
               <TextField
                 autoComplete="off"
-                error={!!(formik.touched.name?.first_name && formik.errors.name?.first_name)}
+                error={!!(formik.touched.name && formik.errors.name)}
                 fullWidth
-                helperText={formik.touched.name?.first_name && formik.errors.name?.first_name}
-                label={localization.sidebar.first_name}
-                name="name.first_name"
+                helperText={formik.touched.name && formik.errors.name}
+                label={localization.table.name}
+                name="name"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 type="text"
-                value={formik.values.name.first_name}
+                value={formik.values.name}
 
               />
-              <TextField
-                autoComplete="off"
-                error={!!(formik.touched.name?.last_name && formik.errors.name?.last_name)}
-                fullWidth
-                helperText={formik.touched.name?.last_name && formik.errors.name?.last_name}
-                label={localization.sidebar.last_name}
-                name="name.last_name"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                type="text"
-                value={formik.values.name.last_name}
 
-              />
               <TextField
                 error={!!(formik.touched.tel_number && formik.errors.tel_number)}
                 fullWidth
@@ -184,7 +165,7 @@ export default function AddClientModal({ getDatas, type, row }) {
                 type="tel"
                 value={formik.values.tel_number}
               />
-         
+
               <TextField
                 error={!!(formik.touched.login && formik.errors.login)}
                 fullWidth
@@ -231,6 +212,6 @@ export default function AddClientModal({ getDatas, type, row }) {
           </DialogActions>
         </form>
       </BootstrapDialog>
-    </>
+    </div>
   );
 }

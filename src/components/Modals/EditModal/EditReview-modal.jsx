@@ -7,11 +7,15 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@heroicons/react/24/solid/XMarkIcon';
-import { MenuItem, SvgIcon, useMediaQuery, FormControlLabel, Switch } from '@mui/material';
+import { MenuItem, Select, SvgIcon, TableRow, useMediaQuery } from '@mui/material';
 import useFetcher from 'src/hooks/use-fetcher';
-import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
+import PlusIcon from '@heroicons/react/24/solid/PencilSquareIcon';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import Content from "src/Localization/Content";
+import { useSelector } from 'react-redux';
+const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
+
 import {
     Box,
     Button,
@@ -19,8 +23,7 @@ import {
     TextField,
     Typography
 } from '@mui/material';
-import Content from "src/Localization/Content";
-import { useSelector } from 'react-redux';
+
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -31,8 +34,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-
-
 function BootstrapDialogTitle(props) {
     const { children, onClose, ...other } = props;
 
@@ -42,15 +43,15 @@ function BootstrapDialogTitle(props) {
             {children}
             {onClose ? (
                 <IconButton
-                aria-label="close"
-                onClick={onClose}
+                    aria-label="close"
+                    onClick={onClose}
                     sx={{
                         position: 'absolute',
                         right: 8,
                         top: 8,
                         color: (theme) => theme.palette.grey[500],
                     }}
-                    >
+                >
                     <CloseIcon width={25} />
                 </IconButton>
             ) : null}
@@ -63,48 +64,47 @@ BootstrapDialogTitle.propTypes = {
     onClose: PropTypes.func.isRequired,
 };
 
-export default function AddClientModal({ getDatas, type, initalData }) {
-    const { lang } = useSelector((state) => state.localiztion);
-    const matches = useMediaQuery("(min-width:500px)");
-    
-    const { localization } = Content[lang];
-    
-
+export default function AddCompanyModal({ getDatas, type, row }) {
     const { loading, error, createData } = useFetcher();
     const [open, setOpen] = React.useState(false);
-    const [status, setStatus] = React.useState(false);
+    const { lang } = useSelector((state) => state.localiztion);
+    const image = React.useRef("")
+
+    const { localization } = Content[lang];
+    const matches = useMediaQuery("(min-width:500px)");
+
     const handleClickOpen = () => {
         setOpen(true);
     };
     const handleClose = () => {
         setOpen(false);
     };
-    const onFinish = () => {
-        formik.values.name = ""
-        formik.values.mainCategory = ""
 
-    }
-
-    console.log(type);
 
     const formik = useFormik({
         initialValues: {
-            name: "",
-            mainCategory:"",
+            name:row.name,
+            body: row.body,
+            lang: row.lang,
+            star: row.star,
             submit: null,
         },
         validationSchema: Yup.object({
             name: Yup.string().min(2).required("Name is required"),
+            star: Yup.number().min(2).required("Star is required"),
+            body: Yup.string().min(2).required("Body is required"),
         }),
+
 
         onSubmit: async (values, helpers) => {
             try {
                 const newData = {
-                    name: values.name,  mainCategory: type || "",
+                    name: values.name,
+                    body: values.body,
+                    lang: values.lang,
+                    star: values.star,
                 };
-                createData(`/${type ? type : "expenses"}/create`, newData, "POST", getDatas, onFinish);
-
-
+                createData(`/review/${row._id}`, newData, "PATCH", getDatas);
             } catch (err) {
                 helpers.setStatus({ success: false });
                 helpers.setErrors({ submit: err.message });
@@ -112,24 +112,20 @@ export default function AddClientModal({ getDatas, type, initalData }) {
             }
         },
 
+       
     });
 
     return (
         <div>
 
-            <Button
-                sx={{m:1}}
+            <IconButton
                 onClick={handleClickOpen}
-                startIcon={
-                    <SvgIcon fontSize="small">
-                        <PlusIcon />
-                    </SvgIcon>
-                }
-                variant="contained"
+               
             >
-                {type ? localization.modal.addCategory.subtitle : localization.modal.addCategory.title}
-
-            </Button>
+                <SvgIcon>
+                    <PlusIcon />
+                </SvgIcon>
+            </IconButton>
             <BootstrapDialog
                 onClose={handleClose}
                 aria-labelledby="customized-dialog-title"
@@ -137,18 +133,20 @@ export default function AddClientModal({ getDatas, type, initalData }) {
             >
                 <BootstrapDialogTitle id="customized-dialog-title"
 onClose={handleClose}>
-                    {type ? localization.modal.addCategory.subtitle : localization.modal.addCategory.title}
+                    {type === "products" ? localization.modal.addProduct.addproduct : localization.modal.addDeliver.adddeliver}
+
                 </BootstrapDialogTitle>
                 <form noValidate
 onSubmit={formik.handleSubmit}>
-                    <DialogContent dividers >
+                    <DialogContent dividers>
                         <Stack spacing={3}
-width={matches ? 400 : null}>
-                       
+                            width={matches ? 400 : null}>
+                        
                             <TextField
                                 error={!!(formik.touched.name && formik.errors.name)}
                                 fullWidth
                                 helperText={formik.touched.name && formik.errors.name}
+                                autoComplete="off"
                                 label={localization.table.name}
                                 name="name"
                                 onBlur={formik.handleBlur}
@@ -156,12 +154,52 @@ width={matches ? 400 : null}>
                                 type="text"
                                 value={formik.values.name}
                             />
+                            <TextField
+                                error={!!(formik.touched.body && formik.errors.body)}
+                                fullWidth
+                                helperText={formik.touched.body && formik.errors.body}
+                                autoComplete="off"
+                                label={localization.table.info}
+                                name="body"
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                type="text"
+                                value={formik.values.body}
+                            />
+                            <Box display={"flex"} gap={1}>
+                                <TextField
+                                    error={!!(formik.touched.star && formik.errors.star)}
+                                    fullWidth
+                                    helperText={formik.touched.star && formik.errors.star}
+                                    autoComplete="off"
+                                    label={localization.table.star}
+                                    name="star"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    type="text"
+                                    value={formik.values.star}
+                                />
+                                <Select error={!!(formik.touched.lang && formik.errors.lang)}
+                                    fullWidth
+                                    helperText={formik.touched.lang && formik.errors.lang}
+                                    label={localization.table.lang}
+                                    name="lang"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    value={formik.values.lang}
+                                sx={{width:"100px"}}
+                                >
+                                    <MenuItem value="uz">UZ</MenuItem>
+                                    <MenuItem value="ru">RU</MenuItem>
+                                    <MenuItem value="en">EN</MenuItem>
+                                </Select>
+                    </Box>
                           
-                        </Stack>
+                              </Stack>
 
                         {formik.errors.submit && (
                             <Typography color="error"
-sx={{ mt: 3 }}
+                                sx={{ mt: 3 }}
 variant="body2">
                                 {formik.errors.submit}
                             </Typography>
@@ -171,7 +209,7 @@ variant="body2">
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleClose}
-fullWidth
+                            fullWidth
 size="large"
 sx={{ my: 1 }}
 type="submit"

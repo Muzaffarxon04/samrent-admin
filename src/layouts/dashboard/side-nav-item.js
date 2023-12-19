@@ -108,7 +108,7 @@ export const SideNavItem = (props) => {
       </ButtonBase>
       {subItems &&
         subItems
-          .filter((el) => el.accessRole.includes("owner"))
+          // .filter((el) => el?.accessRole?.includes("owner"))
           .map((item, index) => {
             const subLinkProps = {
               component: NextLink,

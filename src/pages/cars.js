@@ -6,11 +6,11 @@ import { usePathname, useRouter } from "next/navigation";
 
 
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { CustomersTable } from 'src/sections/customer/orders-table';
+import { CustomersTable } from 'src/sections/customer/customers-table';
 import { CustomersSearch } from 'src/sections/customer/customers-search';
 import { applyPagination } from 'src/utils/apply-pagination';
 import useFetcher from 'src/hooks/use-fetcher';
-import AddCompanyModal from 'src/components/Modals/AddModal/AddBotProducts-modal';
+import AddCompanyModal from 'src/components/Modals/AddModal/AddCar-modal';
 import Content from "src/Localization/Content";
 import { useSelector, useDispatch } from "react-redux";
 import { changePage } from "src/slices/paginationReduser";
@@ -42,9 +42,8 @@ const Page = ({ subId, setSubId }) => {
   const [page, setPage] = useState(0);
   const { pageCount } = useSelector((state) => state.pageCount);
   const [rowsPerPage, setRowsPerPage] = useState(pageCount || 5);
-  const initalData1 = data[`/botsubcategory/${ParamId}`]?.subCategory;
-  const initalData2 = data[`/botproduct/all`]?.botProducts;
-  const initalData = ParamId === "all" ? initalData2 : initalData1?.products;
+
+  const initalData = data[`/webcar/all`]?.cars;
   const [filtered, setFiltered] = useState(initalData || []);
   const customers = useCustomers(filtered, page, rowsPerPage);
 
@@ -72,18 +71,14 @@ const Page = ({ subId, setSubId }) => {
 
 
   function getCountries() {
-    if (ParamId && ParamId !== "all") {
-      fetchData(`/botsubcategory/${ParamId}`);
-    } else {
-      fetchData(`/botproduct/all`);
-    }
+      fetchData(`/webcar/all`);
   }
 
   useEffect(() => {
     getCountries();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ParamId]);
+  }, []);
 
   function onSearch(e) {
     setSearchValue(e.target.value);
@@ -106,14 +101,11 @@ const Page = ({ subId, setSubId }) => {
           if (searchValue == "") {
             return user;
           } else if (
-            user?.nameuz?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
-            user?.nameen?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
-            user?.nameru?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
-            user?.nameen?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
-            user?.infouz?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
-            user?.infoen?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
-            user?.inforu?.toLowerCase().includes(searchValue.toString()?.toLowerCase())
-          ) {
+            user?.name?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
+            user?.title?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
+            user?.type?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
+            user?.cost?.toString()?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
+            user?.from?.toString()?.toLowerCase().includes(searchValue.toString()?.toLowerCase())) {
             return user;
           }
         })
@@ -127,7 +119,7 @@ const Page = ({ subId, setSubId }) => {
   return (
     <>
       <Head>
-        <title>Bot Products | Melek </title>
+        <title>Cars| SAM AVTO RENT </title>
       </Head>
       <Box
         component="main"
@@ -140,31 +132,9 @@ const Page = ({ subId, setSubId }) => {
           <Stack spacing={3}>
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
-                {ParamId !== "all" && (
-                  <Breadcrumbs aria-label="breadcrumb" sx={{ textTransform: "capitalize" }}>
-                    <Typography
-                      color="text.primary"
-                      onClick={() => {
-                        routers.push("/bot-categories");
-                        setSubId("all");
-                      }}
-                    >
-                      {localization.sidebar.delivers}
-                    </Typography>
-                    <Typography
-                      color="text.primary"
-                      onClick={() => {
-                        routers.push("/bot/categories");
-                        setSubId(subId);
-                      }}
-                    >
-                      {localization.table.seria_id + " " + localization.sidebar.delivers}
-                    </Typography>
-                    <Typography color="text.primary"> {initalData1?.name}</Typography>
-                  </Breadcrumbs>
-                )}
-                <Typography variant="h4">
-                  {localization.sidebar.bot + " " + localization.sidebar.products}
+      
+                <Typography variant="h4" textTransform={"capitalize"}>
+                  {localization.sidebar.cars}
                 </Typography>
               </Stack>
 
@@ -181,7 +151,7 @@ const Page = ({ subId, setSubId }) => {
               onRowsPerPageChange={handleRowsPerPageChange}
               page={page}
               data={data}
-              type="botproducts"
+              type="webcars"
               getDate={getCountries}
               rowsPerPage={rowsPerPage}
             />

@@ -43,6 +43,7 @@ const header = {
 
   sidebar: {
     users: "users",
+    type: "type",
 
     bot: "Бот",
     site: "сайт",
@@ -101,6 +102,9 @@ const header = {
     warehouse_product: "Складской товар",
   },
   table: {
+    from: "from",
+    lang: "lang",
+    star: "star",
     moving_from_country: "переезд из страны",
     entered_to_country: "въехал в страну",
     delivered: "доставленный",
@@ -145,7 +149,7 @@ const header = {
     country_number: "номер заказа",
     id: "ид",
     client_id: "клиент ID",
-    type: "единица измерения",
+    type: "car type",
     inn: "ИНН",
     overall_price: "информация о пищевой ценности",
     seria_id: "Саб",

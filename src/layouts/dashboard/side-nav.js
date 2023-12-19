@@ -73,9 +73,8 @@ width={100} />
             }}
           >
             {Items &&
-              Items()
-                .filter((el) => el.accessRole.includes("owner"))
-                .map((item) => {
+              Items()    
+            ?.map((item) => {
                   const active =
                     item.subItems && "/"+pathname.split("/")[1] == item.path
                       ? true

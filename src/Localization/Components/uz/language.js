@@ -41,6 +41,7 @@ const header = {
   },
   sidebar: {
     users: "Foydalanuvchilar",
+    type: "type",
 
     site: "Web sayt",
     mobile: "mobil",
@@ -99,6 +100,9 @@ const header = {
     warehouse_product: "Omborxona Mahsulotlari",
   },
   table: {
+    from: "from",
+    lang: "lang",
+    star: "star",
     creator: "yaratuvchi",
     ordered: "ordered",
     sale_cost: "chegirmadagi narx",
@@ -126,7 +130,7 @@ const header = {
     deliver_phone: "yetkazib beruvchi raqami",
     truck_number: "asosiy",
     add_shipment: "Jo'natma qo'shish",
-    type: "O'lchov birligi",
+    type: "avtomobil turi",
     name: "nomi",
     titile: "ma'lumot",
     subtitle: "qo'shimcha ma'lumot",

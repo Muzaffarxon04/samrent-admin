@@ -1,5 +1,6 @@
 import * as React from "react";
 import PropTypes from "prop-types";
+import { useEffect, useCallback } from 'react';
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -70,34 +71,22 @@ export default function AddClientModal({ getDatas, type, data }) {
         setOpen(false);
     };
     const onFinish = () => {
-        formik.values.name = {
-            first_name: "",
-            last_name: ""
-        };
+        formik.values.name = "";
         formik.values.tel_number = "";
         formik.values.password = "";
-        formik.values.role = "";
         formik.values.login = "";
     };
-  
+
     const formik = useFormik({
         initialValues: {
-            name: {
-                first_name: "",
-                last_name: "" 
-            },
+            name: "",
             login: "",
-            role: "",
             password: "",
             tel_number: "",
             submit: null,
         },
         validationSchema: Yup.object({
-            name: Yup.object({
-                first_name: Yup.string().required('First name is required'),
-                last_name: Yup.string().required('Last name is required')
-            }),
-            role: Yup.string().required('Role is required'),
+            name: Yup.string().required(' name is required'),
             login: Yup.string().required('Login is required'),
             tel_number: Yup.number().required('Telephone number is required'),
             password: Yup.string()
@@ -111,12 +100,8 @@ export default function AddClientModal({ getDatas, type, data }) {
         onSubmit: async (values, helpers) => {
             try {
                 const newData = {
-                    name: {
-                        first_name: values.name.first_name,
-                        last_name: values.name.last_name
-                    },
+                    name: values.name,
                     login: values.login,
-                    role: values.role,
                     tel_number: values.tel_number,
                     password: values.password
                 };
@@ -129,10 +114,8 @@ export default function AddClientModal({ getDatas, type, data }) {
         },
     });
 
-  
-    const admin_roles = ['tasischi', 'moliyachi', 'sotuvchi', 'omborchi', 'prorab', 'taminotchi', 'kassir', 'storekeeper']
-    
-    console.log(formik.values.name);
+
+
 
     return (
         <div>
@@ -154,40 +137,28 @@ export default function AddClientModal({ getDatas, type, data }) {
                 <BootstrapDialogTitle
                     id="customized-dialog-title"
                     onClose={handleClose}>
-                    {localization.sidebar.add_admin }
+                    {type === "supplier" ? localization.modal.addDeliver.adddeliver : type === "agent" ? localization.modal.addAgent.addagent : localization.sidebar.add_admin}
 
                 </BootstrapDialogTitle>
                 <form noValidate
-onSubmit={formik.handleSubmit}>
+                    onSubmit={formik.handleSubmit}>
                     <DialogContent dividers>
                         <Stack spacing={3}
-width={matches ? 400 : null}>
+                            width={matches ? 400 : null}>
                             <TextField
                                 autoComplete="off"
-                                error={!!(formik.touched.name?.first_name && formik.errors.name?.first_name)}
+                                error={!!(formik.touched.name && formik.errors.name)}
                                 fullWidth
-                                helperText={formik.touched.name?.first_name && formik.errors.name?.first_name}
-                                label={localization.sidebar.first_name}
-                                name="name.first_name"
+                                helperText={formik.touched.name && formik.errors.name}
+                                label={localization.table.name}
+                                name="name"
                                 onBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
                                 type="text"
-                                value={formik.values.name.first_name}
-                            
-                            />
-                            <TextField
-                                autoComplete="off"
-                                error={!!(formik.touched.name?.last_name && formik.errors.name?.last_name)}
-                                fullWidth
-                                helperText={formik.touched.name?.last_name && formik.errors.name?.last_name}
-                                label={localization.sidebar.last_name}
-                                name="name.last_name"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="text"
-                                value={formik.values.name.last_name}
+                                value={formik.values.name}
 
                             />
+
                             <TextField
                                 error={!!(formik.touched.tel_number && formik.errors.tel_number)}
                                 fullWidth
@@ -199,26 +170,7 @@ width={matches ? 400 : null}>
                                 type="tel"
                                 value={formik.values.tel_number}
                             />
-                            <TextField
-                                error={!!(formik.touched.role && formik.errors.role)}
-                                fullWidth
-                                select
-                                required
-                                helperText={formik.touched.role && formik.errors.role}
-                                label={localization.sidebar.role}
-                                name="role"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="text"
-                                value={formik.values.role}
-                            >
-                                {admin_roles && admin_roles.map((item, index) => (
-                                        <MenuItem key={index}
-                                            value={item}>
-                                            {localization.sidebar[item]}
-                                        </MenuItem>
-                                    ))}
-                            </TextField>
+
                             <TextField
                                 error={!!(formik.touched.login && formik.errors.login)}
                                 fullWidth
@@ -241,12 +193,12 @@ width={matches ? 400 : null}>
                                 type="text"
                                 value={formik.values.password}
                             />
-                            
+
                         </Stack>
                         {formik.errors.submit && (
                             <Typography color="error"
-sx={{ mt: 3 }}
-variant="body2">
+                                sx={{ mt: 3 }}
+                                variant="body2">
                                 {formik.errors.submit}
                             </Typography>
                         )}

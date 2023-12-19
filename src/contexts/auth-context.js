@@ -128,7 +128,7 @@ export const AuthProvider = (props) => {
              if (req.success) {
                window.sessionStorage.setItem("authenticated", JSON.stringify(req?.data?.token));
                window.sessionStorage.setItem("user", JSON.stringify(req?.data?.admin));
-               router.push('/');
+               router.push('/banners');
 
     dispatch({
       type: HANDLERS.SIGN_IN,

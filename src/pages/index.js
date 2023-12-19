@@ -81,7 +81,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>Dashboard | Melek</title>
+        <title>Dashboard | SAM AVTO RENT</title>
       </Head>
       <Box
         component="main"
@@ -94,7 +94,7 @@ const Page = () => {
           <Box
             sx={
               matches
-                ? { flexDirection: "column", mb:3 }
+                ? { flexDirection: "column", mb: 3 }
                 : { display: "flex", justifyContent: "right", mb: 3 }
             }
           >
@@ -120,14 +120,10 @@ const Page = () => {
             </CustomLabel>
           </Box>
 
-          <Grid container
-spacing={3}>
+          <Grid container spacing={3}>
             {StatisticsData &&
               StatisticsData.map((item, index) => (
-                <Grid xs={12}
-                  key={index}
-sm={6}
-lg={3}>
+                <Grid xs={12} key={index} sm={6} lg={3}>
                   <OverviewBudget
                     difference={12}
                     label={item?.label}

@@ -6,11 +6,11 @@ import { usePathname, useRouter } from "next/navigation";
 
 
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { CustomersTable } from 'src/sections/customer/orders-table';
+import { CustomersTable } from 'src/sections/customer/customers-table';
 import { CustomersSearch } from 'src/sections/customer/customers-search';
 import { applyPagination } from 'src/utils/apply-pagination';
 import useFetcher from 'src/hooks/use-fetcher';
-import AddCompanyModal from 'src/components/Modals/AddModal/AddMobileProducts-modal';
+import AddCompanyModal from 'src/components/Modals/AddModal/AddCar-modal';
 import Content from "src/Localization/Content";
 import { useSelector, useDispatch } from "react-redux";
 import { changePage } from "src/slices/paginationReduser";
@@ -32,7 +32,7 @@ const Page = ({ subId, setSubId }) => {
   const { data, loading, error, fetchData, createData } = useFetcher();
   const dispatch = useDispatch();
   const params = useSearchParams();
-  const ParamId = params.get("mobid");
+  const ParamId = params.get("id");
   const routers = useRouter();
   const router = usePathname();
   const user = JSON.parse(window.sessionStorage.getItem("user")) || false;
@@ -40,14 +40,10 @@ const Page = ({ subId, setSubId }) => {
 
   const [searchValue, setSearchValue] = useState("");
   const [page, setPage] = useState(0);
-  const [categoryId, setCategoryId] = useState("");
   const { pageCount } = useSelector((state) => state.pageCount);
   const [rowsPerPage, setRowsPerPage] = useState(pageCount || 5);
-  const initalData1 = data[`/mobile/category/${ParamId}`]?.category[0];
-  const initalData2 = data[`/mobile/product/all`]?.products;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const initalData = (ParamId === "all" ? initalData2 : initalData1?.mobileProducts) || [];
-  
+
+  const initalData = data[`/mobilecar/all`]?.cars;
   const [filtered, setFiltered] = useState(initalData || []);
   const customers = useCustomers(filtered, page, rowsPerPage);
 
@@ -56,6 +52,7 @@ const Page = ({ subId, setSubId }) => {
   const { localization } = Content[lang];
 
 
+  console.log(initalData);
 
 
   const handlePageChange = useCallback((event, value) => {
@@ -75,37 +72,27 @@ const Page = ({ subId, setSubId }) => {
 
 
   function getCountries() {
-    if (ParamId && ParamId !== "all") {
-      fetchData(`/mobile/category/${ParamId}`, "mobile");
-    }
-    fetchData(`/mobile/product/all`, "mobile");
+      fetchData(`/mobilecar/all`);
   }
 
   useEffect(() => {
     getCountries();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ParamId]);
-
-    function getCategories() {
-      if (categoryId) {
-        fetchData(`/mobile/maincategory/${categoryId}`, "mobile");
-      }
-              fetchData(`/mobile/maincategory/all`, "mobile");
-
-    }
-
-    useEffect(() => {
-      getCategories();
-
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [categoryId]);
+  }, []);
 
   function onSearch(e) {
     setSearchValue(e.target.value);
   }
 
-
+  function onSubmit(id, values) {
+    try {
+      const newData = { status: values };
+      createData(`/order/${id}`, newData, "PATCH", getCountries);
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
 
   useEffect(() => {
     try {
@@ -115,17 +102,11 @@ const Page = ({ subId, setSubId }) => {
           if (searchValue == "") {
             return user;
           } else if (
-            user?.nameuz?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
-            user?.nameen?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
-            user?.nameru?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
-            user?.nameen?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
-            user?.titleuz?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
-            user?.titleen?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
-            user?.sub_titleen?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
-            user?.sub_titleru?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
-            user?.sub_titleuz?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
-            user?.titleru?.toLowerCase().includes(searchValue.toString()?.toLowerCase())
-          ) {
+            user?.name?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
+            user?.title?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
+            user?.type?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
+            user?.cost?.toString()?.toLowerCase().includes(searchValue.toString()?.toLowerCase()) ||
+            user?.from?.toString()?.toLowerCase().includes(searchValue.toString()?.toLowerCase())) {
             return user;
           }
         })
@@ -136,12 +117,10 @@ const Page = ({ subId, setSubId }) => {
     }
   }, [initalData, searchValue]);
 
-  
-
   return (
     <>
       <Head>
-        <title>Mobile Products | Melek </title>
+        <title>Cars| SAM AVTO RENT </title>
       </Head>
       <Box
         component="main"
@@ -154,48 +133,26 @@ const Page = ({ subId, setSubId }) => {
           <Stack spacing={3}>
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
-                {ParamId !== "all" && (
-                  <Breadcrumbs aria-label="breadcrumb" sx={{ textTransform: "capitalize" }}>
-                    <Typography
-                      color="text.primary"
-                      onClick={() => {
-                        routers.push("/mobile/countries");
-                        setSubId("all");
-                      }}
-                    >
-                      {localization.sidebar.delivers}
-                    </Typography>
-                    <Typography
-                      color="text.primary"
-                      onClick={() => {
-                        routers.push("/mobile/countries");
-                        setSubId(subId);
-                      }}
-                    >
-                      {localization.table.seria_id + " " + localization.sidebar.delivers}
-                    </Typography>
-                    <Typography color="text.primary"> {initalData1?.[`name${lang}`]}</Typography>
-                  </Breadcrumbs>
-                )}
-                <Typography variant="h4" textTransform="capitalize">
-                  {localization.sidebar.mobile + " " + localization.sidebar.products}
+                
+                <Typography variant="h4" textTransform={"capitalize"}>
+                  {localization.sidebar.mobile + " " + localization.sidebar.cars}
                 </Typography>
               </Stack>
 
               <div>
-                <AddCompanyModal getDatas={getCountries} initalData={initalData1} data={data} />
+                <AddCompanyModal getDatas={getCountries} />
               </div>
             </Stack>
             <CustomersSearch onSearch={onSearch} type={"country"} />
             <CustomersTable
+              onSubmit={onSubmit}
               count={filtered?.length}
               items={customers}
-              setCategoryId={setCategoryId}
-              categoryData={data}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
               page={page}
-              type="mobileproduct"
+              data={data}
+              type="cars"
               getDate={getCountries}
               rowsPerPage={rowsPerPage}
             />

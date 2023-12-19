@@ -15,7 +15,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>Settings | Melek</title>
+        <title>Settings | SAM AVTO RENT</title>
       </Head>
       <Box
         component="main"

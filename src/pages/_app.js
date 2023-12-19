@@ -35,7 +35,7 @@ const App = (props) => {
       <PersistGate persistor={persistor}>
         <CacheProvider value={emotionCache}>
           <Head>
-            <title>Melek</title>
+            <title>SAM AVTO RENT</title>
             <meta name="viewport" content="initial-scale=1, width=device-width" />
           </Head>
           <ToastProvider autodismiss autoDismissTimeout={2000} placement="bottom-right">

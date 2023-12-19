@@ -19,10 +19,9 @@ import {
 } from "@mui/material";
 import useFetcher from "src/hooks/use-fetcher";
 import DeleteModal from "src/components/Modals/DeleteModal";
-import EditCompanyModal from "src/components/Modals/EditModal/EditOrder-modal";
-import EditProductModal from "src/components/Modals/EditModal/EditProduct-modal";
-import EditBotProductModal from "src/components/Modals/EditModal/EditBotProduct-modal";
-import EditMobileProductModal from "src/components/Modals/EditModal/EditMobileProduct-modal";
+import EditProductModal from "src/components/Modals/EditModal/EditAnswer-modal";
+
+
 import { Scrollbar } from "src/components/scrollbar";
 import Content from "src/Localization/Content";
 import { useSelector } from "react-redux";
@@ -32,8 +31,7 @@ export const CustomersTable = (props) => {
     count = 0,
     type,
     items = [],
-    setCategoryId = () => {},
-    categoryData = [],
+  
     onPageChange = () => {},
     onRowsPerPageChange,
     page = 0,

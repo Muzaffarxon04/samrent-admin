@@ -52,9 +52,9 @@ const Page = () => {
           if (searchValue == "") {
             return user;
           } else if (
-            user?.titleuz.toLowerCase().includes(searchValue) ||
-            user?.titleen.toLowerCase().includes(searchValue) ||
-            user?.titleru.toLowerCase().includes(searchValue)
+            user?.titleuz.toLowerCase().includes(searchValue.toString().toLowerCase()) ||
+            user?.titleen.toLowerCase().includes(searchValue.toString().toLowerCase()) ||
+            user?.titleru.toLowerCase().includes(searchValue.toString().toLowerCase())
           ) {
             return user;
           }
@@ -102,7 +102,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>Banners | Melek</title>
+        <title>Banners | SAM AVTO RENT</title>
       </Head>
       <Box
         component="main"
@@ -113,25 +113,22 @@ const Page = () => {
       >
         <Container maxWidth="xl">
           <Stack spacing={3}>
-            <Stack direction="row"
-justifyContent="space-between"
-spacing={4}>
+            <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
-                <Typography variant="h4">{localization.sidebar.delivers}</Typography>
+                <Typography variant="h4">{localization.sidebar.banners}</Typography>
               </Stack>
-               <div>
+              <div>
                 <AddCompanyModal getDatas={getCountries} />
               </div>
             </Stack>
-            <CustomersSearch type="country"
-onSearch={onSearch} />
+            <CustomersSearch type="country" onSearch={onSearch} />
             <CustomersTable
               count={filtered?.length}
               items={customers}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
               page={page}
-              type="category"
+              type="banners"
               getDate={getCountries}
               rowsPerPage={rowsPerPage}
             />

@@ -1,22 +1,24 @@
 import * as React from "react";
+import { useEffect, useRef } from "react";
+import Content from "src/Localization/Content";
+import { useToasts } from "react-toast-notifications";
+import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
-import {MenuItem} from "@mui/material";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@heroicons/react/24/solid/XMarkIcon";
+import { SvgIcon, useMediaQuery } from "@mui/material";
 import useFetcher from "src/hooks/use-fetcher";
-import PlusIcon from "@heroicons/react/24/solid/PencilSquareIcon";
-const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
-
+import {PlusIcon, PencilSquareIcon} from "@heroicons/react/24/solid";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useMediaQuery, Button, Stack, SvgIcon, TextField, Typography } from "@mui/material";
-import Content from "src/Localization/Content";
-import { useSelector } from "react-redux";
+import { Box, Button, Stack, TextField, Typography, MenuItem } from "@mui/material";
+const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
+import { useSearchParams } from "next/navigation";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -32,7 +34,7 @@ function BootstrapDialogTitle(props) {
 
   return (
     <DialogTitle sx={{ m: 0, p: 2 }}
-{...other}>
+      {...other}>
       {children}
       {onClose ? (
         <IconButton
@@ -57,15 +59,17 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-export default function AddCompanyModal({ row, route, getDatas, data, subId }) {
-  const { loading, error, createData } = useFetcher();
-  const [open, setOpen] = React.useState(false);
-  const matches = useMediaQuery("(min-width:500px)");
-  const image = React.useRef("")
 
+export default function AddOrderModal({ getDatas, row }) {
   const { lang } = useSelector((state) => state.localiztion);
-
+  const matches = useMediaQuery("(min-width:500px)");
+  const params = useSearchParams()
+  const ParamId = params.get("id")
+  const {addToast} = useToasts()
   const { localization } = Content[lang];
+  const image = React.useRef("")
+  const { fetchData, data, loading, error, createData } = useFetcher();
+  const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -77,55 +81,60 @@ export default function AddCompanyModal({ row, route, getDatas, data, subId }) {
 
   const formik = useFormik({
     initialValues: {
-      category_id: subId,
-      nameuz: row.titleuz,
-      nameru: row.titleru,
-      nameen: row.titleen,
+      category_id:row.type ,
+      nameen: row.from,
+      nameuz: row.name,
+      nameru: row.title,
+      image: "",
+      cost:row.cost,
       submit: null,
     },
     validationSchema: Yup.object({
-      nameuz: Yup.string().min(2).required("Name is required"),
-      nameru: Yup.string().min(2).required("Name is required"),
-      nameen: Yup.string().min(2).required("Name is required"),
+      category_id: Yup.string().required(" Type is required"),
+      nameuz: Yup.string().min(2).required(" Name is required"),
+      nameru: Yup.string().min(2).required(" Info is required"),
+      nameen: Yup.number().required(" From days is required"),
+      cost: Yup.number().required(" Cost is required"),
+
     }),
+
     onSubmit: async (values, helpers) => {
       try {
-        const newData = { nameuz: values.nameuz, nameru: values.nameru, nameen: values.nameen };
 
-        if (route === "banner") {
-
-          const formData = new FormData();
-          image.current?.files[0] && formData.append('image', image.current?.files[0]);
-          formData.append('titleuz', values.nameuz);
-          formData.append('titleen', values.nameen);
-          formData.append('titleru', values.nameru);
-
-
-          const response = await fetch(BaseUrl + `/banner/${row._id}`, {
-            method: 'PATCH',
-            headers: {
-              Authorization: JSON.parse(window.sessionStorage.getItem("authenticated")) || false,
-              lang: lang,
-            },
-            body: formData,
-          });
-
-          const res = await response.json()
-
-          if (res.success) {
-
-            getDatas()
-        
-          }
-
-          addToast(res.message, {
-            appearance: res.success ? "success" : "error",
-            autoDismiss: true,
-          });
-
-        } else {
-          createData(`/${route}/${row._id}`, newData, "PATCH", getDatas);
+        const formData = new FormData();
+        for (let index = 0; index < image.current?.files?.length; index++) {
+         formData.append('images', image.current?.files[index]);  
         }
+        formData.append('name', values.nameuz);
+        formData.append('title', values.nameru);
+        formData.append('from', values.nameen);
+        formData.append('cost', values.cost);
+        formData.append('type', values.category_id);
+       
+
+
+        const response = await fetch(BaseUrl + `/webcar/${row._id}`, {
+          method: 'PATCH',
+
+          headers: {
+            Authorization: JSON.parse(window.sessionStorage.getItem("authenticated")) || false,
+            lang: lang,
+          },
+          body: formData,
+        });
+
+        const res = await response.json()
+
+        if (res.success) {
+
+          getDatas()
+        }
+
+        addToast(res.message, {
+          appearance: res.success ? "success" : "error",
+          autoDismiss: true,
+        });
+
       } catch (err) {
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
@@ -134,68 +143,87 @@ export default function AddCompanyModal({ row, route, getDatas, data, subId }) {
     },
   });
 
-  
+
+  const carCategories = [
+    {
+      name: "Standart",
+      value: "Standart",
+    },
+    {
+      name: "Start",
+      value: "Start",
+    },
+    {
+      name: "Premium",
+      value: "Premium",
+    },
+    {
+      name: "Luxury",
+      value: "Luxury",
+    }
+  ]
+
+
+
   return (
     <>
+      
       <IconButton onClick={handleClickOpen}>
-        <SvgIcon>
-          <PlusIcon color="green" />
+        <SvgIcon >
+          <PencilSquareIcon/>
         </SvgIcon>
       </IconButton>
-
       <BootstrapDialog onClose={handleClose}
-aria-labelledby="customized-dialog-title"
-open={open}>
+        aria-labelledby="customized-dialog-title"
+        open={open}>
         <BootstrapDialogTitle id="customized-dialog-title"
-onClose={handleClose}>
-          {route !== "mainproducts"
-            ? localization.modal.addDeliver.editdeliver
-            : localization.modal.addProduct.editproduct}
+          onClose={handleClose}>
+          {localization.modal.addProduct.addproduct} 
         </BootstrapDialogTitle>
         <form noValidate
-onSubmit={formik.handleSubmit}>
+          onSubmit={formik.handleSubmit}>
           <DialogContent dividers>
             <Stack spacing={3}
               width={matches ? 400 : null}>
-              {route === "mobile/category" && <>
-             
+              <TextField
+                fullWidth
+                name="image"
+                inputProps={{
+                  multiple: true
+                }}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="file"
+                inputRef={image}
+              />
+
               <TextField
                 error={!!(formik.touched.category_id && formik.errors.category_id)}
                 fullWidth
                 select
                 helperText={formik.touched.category_id && formik.errors.category_id}
-                label={localization.table.country}
+                label={localization.sidebar.type}
                 name="category_id"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 type="text"
                 value={formik.values.category_id}
               >
-                {data[`/mobile/maincategory/all`]?.categories &&
-                  data[`/mobile/maincategory/all`]?.categories.map((item) => (
-                    <MenuItem key={item?._id}
-                      value={item?._id}>
-                      {item?.[`name${lang || "uz"}`]}
+                {carCategories &&
+                  carCategories.map((item) => (
+                    <MenuItem key={item?.value}
+                      value={item?.value}>
+                      {item?.name}
                     </MenuItem>
                   ))}
               </TextField>
 
-       
+              <TextField
 
-              </>}
-              <TextField
-                fullWidth
-                name="image"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                type="file"
-                inputRef={image}
-              />
-              <TextField
                 error={!!(formik.touched.nameuz && formik.errors.nameuz)}
                 fullWidth
                 helperText={formik.touched.nameuz && formik.errors.nameuz}
-                label={localization.table.name + " " + localization.en}
+                label={localization.table.name }
                 name="nameuz"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
@@ -203,34 +231,46 @@ onSubmit={formik.handleSubmit}>
                 value={formik.values.nameuz}
               />
               <TextField
+
                 error={!!(formik.touched.nameru && formik.errors.nameru)}
                 fullWidth
                 helperText={formik.touched.nameru && formik.errors.nameru}
-                label={localization.table.name + " " + localization.ru}
+                label={localization.table.info}
                 name="nameru"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 type="text"
                 value={formik.values.nameru}
-              />
-              <TextField
+              />  <TextField
+
                 error={!!(formik.touched.nameen && formik.errors.nameen)}
                 fullWidth
                 helperText={formik.touched.nameen && formik.errors.nameen}
-                label={localization.table.name + " " + localization.en}
+                label={localization.table.from}
                 name="nameen"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 type="text"
                 value={formik.values.nameen}
               />
-  
+           
+              <TextField
+                error={!!(formik.touched.cost && formik.errors.cost)}
+                fullWidth
+                helperText={formik.touched.cost && formik.errors.cost}
+                label={localization.table.new_price}
+                name="cost"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.cost}
+              />
             </Stack>
 
             {formik.errors.submit && (
               <Typography color="error"
-sx={{ mt: 3 }}
-variant="body2">
+                sx={{ mt: 3 }}
+                variant="body2">
                 {formik.errors.submit}
               </Typography>
             )}
@@ -244,7 +284,7 @@ variant="body2">
               type="submit"
               variant="contained"
             >
-              {localization.update}
+              {localization.modal.add}
             </Button>
           </DialogActions>
         </form>

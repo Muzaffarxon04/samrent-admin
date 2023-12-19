@@ -111,7 +111,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>FAQs | Melek </title>
+        <title>FAQs | RENTAL </title>
       </Head>
       <Box
         component="main"
@@ -126,7 +126,7 @@ const Page = () => {
 justifyContent="space-between"
 spacing={4}>
               <Stack spacing={1}>
-                <Typography variant="h4">{localization.sidebar.products}</Typography>
+                <Typography variant="h4">{localization.sidebar.answers}</Typography>
               </Stack>
               {/* {checkAccess && ( */}
                 <div>

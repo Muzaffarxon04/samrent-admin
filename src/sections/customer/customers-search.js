@@ -10,19 +10,7 @@ export const CustomersSearch = ({ onSearch, select,  type, extraData }) => {
   const { data, loading, error, fetchData } = useFetcher();
       const [subCategories, setSubCategories] = useState([]);
 
-   useEffect(() => {
-  if (type === "incomes" || type === "expenses") {
-    setSubCategories(
-      (extraData[`/${type}/all`]?.[`${type}`] &&
-        extraData[`/${type}/all`]?.[`${type}`].find((item) => item._id == select.value)) ||
-        []
-    );
-  }
-   // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [select?.value, type]);
 
-  
-  
 
 
  const { lang } = useSelector((state) => state.localiztion);

@@ -61,8 +61,12 @@ const [filtered, setFiltered] = useState(initalData || []);
             if (searchValue == "") {
               return user;
             } else if (
-              user?.name?.first_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
-              user?.name?.last_name?.toLowerCase().includes(searchValue.toLowerCase()) || user?.role?.toLowerCase().includes(searchValue.toLowerCase())
+              user?.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+              user?.login?.toLowerCase().includes(searchValue.toLowerCase()) ||
+              user?.tel_number?.toString()
+                ?.toLowerCase()
+                .includes(searchValue.toString().toLowerCase()) ||
+              user?.role?.toLowerCase().includes(searchValue.toLowerCase())
             ) {
               return user;
             }
@@ -113,7 +117,7 @@ const [filtered, setFiltered] = useState(initalData || []);
   return (
     <>
       <Head>
-        <title>Admins | Melek</title>
+        <title>Admins | SAM AVTO RENT</title>
       </Head>
       <Box
         component="main"
@@ -130,10 +134,10 @@ spacing={4}>
               <Stack spacing={1}>
                 <Typography variant="h4">{localization.sidebar.admins}</Typography>
               </Stack>
-             {checkAccess && <div>
+             <div>
                 <AddCompanyModal data={data}
 getDatas={getCountries} />
-              </div>}
+              </div>
             </Stack>
             <CustomersSearch type="admin"
 onSearch={onSearch} />
