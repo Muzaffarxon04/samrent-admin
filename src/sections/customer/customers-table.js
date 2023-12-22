@@ -20,6 +20,7 @@ import { useEffect } from "react";
 import DeleteModal from "src/components/Modals/DeleteModal";
 import EditCompanyModal from "src/components/Modals/EditModal/EditReview-modal";
 import EditCarModal from "src/components/Modals/EditModal/EditCar-modal";
+import EditMobileCarModal from "src/components/Modals/EditModal/EditMobileCar-modal";
 import { Scrollbar } from "src/components/scrollbar";
 import Content from "src/Localization/Content";
 import { useSelector } from "react-redux";
@@ -61,9 +62,8 @@ const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
                   <TableCell>{localization.table.image}</TableCell>
                   <TableCell>{localization.table.name}</TableCell>
                   <TableCell>{localization.table.info}</TableCell>
-                  <TableCell>{localization.table.new_price}</TableCell>
-                  <TableCell>{localization.table.from}</TableCell>
                   <TableCell>{localization.sidebar.type}</TableCell>
+                  <TableCell>{localization.table.new_price}</TableCell>
                   <TableCell>{localization.action}</TableCell>
                 </TableRow>
               ) : type === "webcars" ? (
@@ -102,29 +102,34 @@ const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
                 return (
                   <>
                     {type === "cars" ? (
-                      <TableRow hover key={customer._id}>
+                      <TableRow
+                        onClick={() => router.push(`/mobile/cars/${customer._id}`)}
+                        hover
+                        key={customer._id}
+                      >
                         <TableCell>
-                          {!!customer.images &&
-                            customer?.images?.map((img, id) => (
-                              <Box key={id} display={"flex"} margin={0.3}>
-                                <b>{id + 1}) </b>
-                                <Image
-                                  src={BaseUrl + "/file/cars/" + img}
-                                  alt="img"
-                                  width={60}
-                                  height={60}
-                                />
-                              </Box>
-                            ))}
+                          {!!customer.images && (
+                            <Image
+                              style={{ borderRadius: 6 }}
+                              src={BaseUrl + "/file/cars/" + customer.images[0]}
+                              alt="img"
+                              width={140}
+                              height={100}
+                            />
+                          )}
                         </TableCell>
                         <TableCell>{customer.name}</TableCell>
                         <TableCell>{customer.title}</TableCell>
-                        <TableCell>{customer.cost}</TableCell>
                         {type === "webcars" && <TableCell>{customer.from}</TableCell>}
                         <TableCell>{customer.type}</TableCell>
+                        <TableCell>{customer.cost}</TableCell>
                         <TableCell onClick={(e) => e.stopPropagation()}>
-                          <EditCarModal row={customer} route={`webcar`} getDatas={getDate} />
-                          <DeleteModal route={`/webcar/${customer._id}`} getDatas={getDate} />
+                          <EditMobileCarModal
+                            row={customer}
+                            route={`mobilecar`}
+                            getDatas={getDate}
+                          />
+                          <DeleteModal route={`/mobilecar/${customer._id}`} getDatas={getDate} />
                         </TableCell>
                       </TableRow>
                     ) : type === "webcars" ? (

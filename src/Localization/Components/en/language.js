@@ -54,6 +54,15 @@ const header = {
   },
 
   table: {
+    fuel_type: "fuel type",
+    max_speed: "max speed",
+    place: "place",
+    tinting: "tinting",
+    baggage: "baggage",
+    conditioner: "conditioner",
+    false: "not available",
+    true: "available",
+
     lang: "lang",
     star: "star",
     from: "from",
@@ -98,7 +107,7 @@ const header = {
     id: "id",
     inn: "INN",
     total_amount: "total amount",
-    type: "тип автомобиля",
+    type: "Car Type",
     seria_id: "sub",
     sum: "Summa",
     dollar: "in currency",

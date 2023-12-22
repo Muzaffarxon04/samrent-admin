@@ -10,7 +10,7 @@ import { CustomersTable } from 'src/sections/customer/customers-table';
 import { CustomersSearch } from 'src/sections/customer/customers-search';
 import { applyPagination } from 'src/utils/apply-pagination';
 import useFetcher from 'src/hooks/use-fetcher';
-import AddCompanyModal from 'src/components/Modals/AddModal/AddCar-modal';
+import AddCompanyModal from 'src/components/Modals/AddModal/AddMobileCar-modal';
 import Content from "src/Localization/Content";
 import { useSelector, useDispatch } from "react-redux";
 import { changePage } from "src/slices/paginationReduser";
@@ -52,7 +52,6 @@ const Page = ({ subId, setSubId }) => {
   const { localization } = Content[lang];
 
 
-  console.log(initalData);
 
 
   const handlePageChange = useCallback((event, value) => {
