@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Content from "src/Localization/Content";
 import { useToasts } from "react-toast-notifications";
 import { useSelector } from "react-redux";
@@ -67,12 +67,20 @@ export default function EditMobileCarModal({ getDatas, row }) {
   const ParamId = params.get("id")
   const {addToast} = useToasts()
   const { localization } = Content[lang];
-  const image = React.useRef("")
+  const image = useRef("")
 
 
-  const [status, setStatus] = React.useState(row?.status);
-  const [tinting, setTinting] = React.useState(row?.tinting);
-  const [open, setOpen] = React.useState(false);
+
+  const [dataItem, setDataItem] = useState(row);
+  const [status, setStatus] = useState(dataItem.status);
+  const [tinting, setTinting] = useState(dataItem.tinting);
+  const [open, setOpen] = useState(false);
+
+
+useEffect(() => {
+  setDataItem(row)
+}, [row])
+
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -81,19 +89,18 @@ export default function EditMobileCarModal({ getDatas, row }) {
     setOpen(false);
   };
 
+console.log(dataItem);
 
   const formik = useFormik({
     initialValues: {   
-      name:row?.name,
-      title:row?.title,
-      fuel_type:row?.fuel_type,
-      type:row?.type,
-      place: row?.place,
-      max_speed:row?.max_speed,
-      conditioner:row?.conditioner,
-      tinting:row?.tinting,
-      baggage:row?.baggage,
-      cost:row?.cost,
+      name:dataItem.name,
+      title:dataItem.title,
+      fuel_type:dataItem.fuel_type,
+      type:dataItem.type,
+      place: dataItem.place,
+      max_speed:dataItem.max_speed,
+      baggage:dataItem.baggage,
+      cost:dataItem.cost,
       submit: null,
     },
     validationSchema: Yup.object({
@@ -120,13 +127,13 @@ export default function EditMobileCarModal({ getDatas, row }) {
         formData.append('place', values.place);
         formData.append('fuel_type', values.fuel_type);
         formData.append('baggage', values.baggage);
-        formData.append('conditioner', status);
+        formData.append('conditioner', Boolean(status));
         formData.append('max_speed', values.max_speed);
         formData.append('tinting', tinting);
        
 
 
-        const response = await fetch(BaseUrl +`/mobilecar/${row._id}`, {
+        const response = await fetch(BaseUrl +`/mobilecar/${dataItem._id}`, {
           method: 'PATCH',
 
           headers: {
@@ -210,7 +217,7 @@ export default function EditMobileCarModal({ getDatas, row }) {
         open={open}>
         <BootstrapDialogTitle  id="customized-dialog-title"
           onClose={handleClose}>
-          {localization.modal.add + " " + localization.sidebar.mobile + " " + localization.sidebar.cars} 
+          {localization.update + " " + localization.sidebar.mobile + " " + localization.sidebar.cars} 
         </BootstrapDialogTitle>
         <form noValidate
           onSubmit={formik.handleSubmit}>
@@ -227,10 +234,11 @@ export default function EditMobileCarModal({ getDatas, row }) {
                 onChange={formik.handleChange}
                 type="file"
                 inputRef={image}
+                
               />
 
               <TextField
-
+          
                 error={!!(formik.touched.name && formik.errors.name)}
                 fullWidth
                 helperText={formik.touched.name && formik.errors.name}
@@ -239,10 +247,10 @@ export default function EditMobileCarModal({ getDatas, row }) {
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 type="text"
-                value={formik.values.name}
+                            value={formik.values.name}
               />
               <TextField
-
+             
                 error={!!(formik.touched.title && formik.errors.title)}
                 fullWidth
                 helperText={formik.touched.title && formik.errors.title}
@@ -251,7 +259,7 @@ export default function EditMobileCarModal({ getDatas, row }) {
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 type="text"
-                value={formik.values.title}
+                              value={formik.values.title}
               />
 
               <TextField
@@ -264,7 +272,8 @@ export default function EditMobileCarModal({ getDatas, row }) {
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 type="text"
-                value={formik.values.type}
+         
+                            value={formik.values.type}
               >
                 {carCategories &&
                   carCategories.map((item) => (
@@ -278,12 +287,15 @@ export default function EditMobileCarModal({ getDatas, row }) {
                 error={!!(formik.touched.fuel_type && formik.errors.fuel_type)}
                 fullWidth
                 select
+            
                 helperText={formik.touched.fuel_type && formik.errors.fuel_type}
                 label={localization.table.fuel_type}
                 name="fuel_type"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 type="text"
+                
+
                 value={formik.values.fuel_type}
               >
                 {carFuelType &&
@@ -298,13 +310,19 @@ export default function EditMobileCarModal({ getDatas, row }) {
                 <FormControlLabel label={localization.table.tinting}
                   control={<Switch
                     onChange={(e) => setTinting(e.target.checked)}
-                    value={tinting} />} />
+                    checked={tinting}
+
+            
+                  />}
+                />
                 <FormControlLabel label={localization.table.conditioner}
                   control={<Switch
+    
                  
                     onChange={(e) => setStatus(e.target.checked)}
-                    value={status} />} />
-         </Box>
+                    checked={status} />} />
+              </Box>
+              
               <TextField
                 error={!!(formik.touched.max_speed && formik.errors.max_speed)}
                 fullWidth
@@ -314,12 +332,15 @@ export default function EditMobileCarModal({ getDatas, row }) {
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 type="text"
+                 
+
                 value={formik.values.max_speed}
               />
               <TextField     error={!!(formik.touched.baggage && formik.errors.baggage)}
                 fullWidth
                 helperText={formik.touched.baggage && formik.errors.baggage}
-            
+                      
+
                 label={localization.table.baggage}
                 name="baggage"
                 onBlur={formik.handleBlur}
@@ -333,6 +354,7 @@ export default function EditMobileCarModal({ getDatas, row }) {
                 helperText={formik.touched.place && formik.errors.place}
                 label={localization.table.place}
                 name="place"
+                             
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 type="text"
@@ -342,7 +364,7 @@ export default function EditMobileCarModal({ getDatas, row }) {
                 fullWidth
                 helperText={formik.touched.cost && formik.errors.cost}
                 label={localization.table.new_price}
-
+                
                 name="cost"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
@@ -368,7 +390,7 @@ export default function EditMobileCarModal({ getDatas, row }) {
               type="submit"
               variant="contained"
             >
-              {localization.modal.add}
+              {localization.update}
             </Button>
           </DialogActions>
         </form>

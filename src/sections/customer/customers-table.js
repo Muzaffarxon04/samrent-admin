@@ -64,7 +64,6 @@ const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
                   <TableCell>{localization.table.info}</TableCell>
                   <TableCell>{localization.sidebar.type}</TableCell>
                   <TableCell>{localization.table.new_price}</TableCell>
-                  <TableCell>{localization.action}</TableCell>
                 </TableRow>
               ) : type === "webcars" ? (
                 <TableRow>
@@ -123,14 +122,7 @@ const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
                         {type === "webcars" && <TableCell>{customer.from}</TableCell>}
                         <TableCell>{customer.type}</TableCell>
                         <TableCell>{customer.cost}</TableCell>
-                        <TableCell onClick={(e) => e.stopPropagation()}>
-                          <EditMobileCarModal
-                            row={customer}
-                            route={`mobilecar`}
-                            getDatas={getDate}
-                          />
-                          <DeleteModal route={`/mobilecar/${customer._id}`} getDatas={getDate} />
-                        </TableCell>
+                     
                       </TableRow>
                     ) : type === "webcars" ? (
                       <TableRow hover key={customer._id}>

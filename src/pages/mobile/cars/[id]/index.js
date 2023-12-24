@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import { Box, Button, Card, Container, Stack, SvgIcon, Typography, Breadcrumbs } from "@mui/material";
@@ -10,8 +11,7 @@ import DeleteModal from "src/components/Modals/DeleteModal";
 import EditMobileCarModal from "src/components/Modals/EditModal/EditMobileCar-modal";
 
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { CustomersTable } from 'src/sections/customer/customers-table';
-import { CustomersSearch } from 'src/sections/customer/customers-search';
+
 import { applyPagination } from 'src/utils/apply-pagination';
 import useFetcher from 'src/hooks/use-fetcher';
 import AddCompanyModal from 'src/components/Modals/AddModal/AddMobileCar-modal';
@@ -20,13 +20,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { changePage } from "src/slices/paginationReduser";
 import Link from 'next/link';
 
-
-
-const useCustomers = (data, page, rowsPerPage) => {
-  return useMemo(() => {
-    return applyPagination(data, page, rowsPerPage);
-  }, [data, page, rowsPerPage]);
-};
 
 
 
@@ -42,13 +35,10 @@ const Page = ({ subId, setSubId }) => {
   const user = JSON.parse(window.sessionStorage.getItem("user")) || false;
   const checkAccess = routeControler[user.role]?.edit?.find((item) => item == router);
 const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
+const datas = data[`/mobilecar/${ParamId}`] ? data[`/mobilecar/${ParamId}`]?.car : [];
 
-const [searchValue, setSearchValue] = useState("");
-const [page, setPage] = useState(0);
-const { pageCount } = useSelector((state) => state.pageCount);
-const [rowsPerPage, setRowsPerPage] = useState(pageCount || 5);
 
-const initalData = data[`/mobilecar/${ParamId}`]?.car || [];
+
 const [mainImage, setMainImage] = useState("");
 
   const { lang } = useSelector((state) => state.localiztion);
@@ -57,8 +47,8 @@ const [mainImage, setMainImage] = useState("");
 
 
   useEffect(() => {
-    initalData?.images && setMainImage(initalData?.images[0]);
-  }, [initalData?.images]);
+    datas?.images && setMainImage(datas?.images[0]);
+  }, [datas?.images]);
   
   
 
@@ -72,14 +62,10 @@ const [mainImage, setMainImage] = useState("");
     getCountries();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function onSearch(e) {
-    setSearchValue(e.target.value);
-  }
+  }, [ParamId]);
 
 
-console.log(initalData?._id);
+
 
   return (
     <>
@@ -103,7 +89,7 @@ console.log(initalData?._id);
                     {localization.sidebar.mobile + " " + localization.sidebar.cars}
                   </Link>
 
-                  <Typography color="text.primary">{initalData?.name}</Typography>
+                  <Typography color="text.primary">{datas?.name}</Typography>
                 </Breadcrumbs>
               </Stack>
             </Stack>
@@ -112,8 +98,8 @@ console.log(initalData?._id);
                 <Box sx={{ minWidth: 800, display: "flex", gap: "40px" }}>
                   <Box display={"flex"} gap={2}>
                     <Box display={"flex"} flexDirection={"column"} gap={1}>
-                      {initalData?.images &&
-                        initalData?.images?.map((item, index) => (
+                      {datas?.images &&
+                        datas?.images?.map((item, index) => (
                           <Box
                             key={index}
                             onClick={() => {
@@ -125,7 +111,7 @@ console.log(initalData?._id);
                               blurDataURL="/assets/errors/error-404.png"
                               style={{ borderRadius: 4 }}
                               src={`${BaseUrl}/file/cars/${item}`}
-                              alt={initalData?.name}
+                              alt={datas?.name}
                               width={80}
                               height={80}
                             />
@@ -155,7 +141,7 @@ console.log(initalData?._id);
                     >
                       {localization.table.name}:
                       <Typography fontWeight={550} fontSize={22}>
-                        {initalData.name}
+                        {datas.name}
                       </Typography>
                     </Typography>
                     <Typography
@@ -168,7 +154,7 @@ console.log(initalData?._id);
                     >
                       {localization.table.info}:
                       <Typography fontWeight={550} fontSize={22}>
-                        {initalData.title}
+                        {datas.title}
                       </Typography>
                     </Typography>
                     <Typography
@@ -181,7 +167,7 @@ console.log(initalData?._id);
                     >
                       {localization.table.fuel_type}:
                       <Typography fontWeight={550} fontSize={22}>
-                        {initalData.fuel_type}
+                        {datas.fuel_type}
                       </Typography>
                     </Typography>
                     <Typography
@@ -194,7 +180,7 @@ console.log(initalData?._id);
                     >
                       {localization.table.new_price}:
                       <Typography fontWeight={550} fontSize={22}>
-                        {initalData.cost}
+                        {datas.cost}
                       </Typography>
                     </Typography>
                     <Typography
@@ -207,7 +193,7 @@ console.log(initalData?._id);
                     >
                       {localization.table.type}:
                       <Typography fontWeight={550} fontSize={22}>
-                        {initalData.type}
+                        {datas.type}
                       </Typography>
                     </Typography>
                     <Typography
@@ -220,7 +206,7 @@ console.log(initalData?._id);
                     >
                       {localization.table.max_speed}:
                       <Typography fontWeight={550} fontSize={22}>
-                        {initalData.max_speed}
+                        {datas.max_speed}
                       </Typography>
                     </Typography>
                     <Typography
@@ -233,7 +219,7 @@ console.log(initalData?._id);
                     >
                       {localization.table.place}:
                       <Typography fontWeight={550} fontSize={22}>
-                        {initalData.place}
+                        {datas.place}
                       </Typography>
                     </Typography>
                     <Typography
@@ -246,7 +232,7 @@ console.log(initalData?._id);
                     >
                       {localization.table.baggage}:
                       <Typography fontWeight={550} fontSize={22}>
-                        {initalData.baggage}
+                        {datas.baggage}
                       </Typography>
                     </Typography>
                     <Typography
@@ -259,11 +245,11 @@ console.log(initalData?._id);
                     >
                       {localization.table.conditioner}:
                       <Typography
-                        color={!initalData.conditioner && "red"}
+                        color={!datas.conditioner && "red"}
                         fontWeight={550}
                         fontSize={22}
                       >
-                        {localization?.table?.[initalData.conditioner]}
+                        {localization?.table?.[datas.conditioner]}
                       </Typography>
                     </Typography>
                     <Typography
@@ -275,29 +261,23 @@ console.log(initalData?._id);
                       gap={1}
                     >
                       {localization.table.tinting}:
-                      <Typography
-                        color={!initalData.tinting && "red"}
-                        fontWeight={550}
-                        fontSize={22}
-                      >
-                        {localization?.table?.[initalData.tinting]}
+                      <Typography color={!datas.tinting && "red"} fontWeight={550} fontSize={22}>
+                        {localization?.table?.[datas.tinting]}
                       </Typography>
                     </Typography>
                   </Box>
-
                 </Box>
-                  <Box>
-                    <EditMobileCarModal
-                      row={initalData}
-                      route={`mobilecar`}
-                      getDatas={getCountries}
-                    />
-                  <DeleteModal route={`/mobilecar/${initalData?._id}`} getDatas={() => {
-                  
-routers.push("/mobile/cars");
-                  }
-                  } />
-                  </Box>
+                  {Object.keys(datas).length && (
+                <Box>
+                    <EditMobileCarModal row={datas} getDatas={getCountries} />
+                  <DeleteModal
+                  route={`/mobilecar/${datas?._id}`}
+                  getDatas={() => {
+                    routers.push("/mobile/cars");
+                  }}
+                  />
+                </Box>
+                  )}
               </Scrollbar>
             </Card>
           </Stack>
