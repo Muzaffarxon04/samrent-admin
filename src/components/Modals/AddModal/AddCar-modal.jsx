@@ -151,25 +151,25 @@ export default function AddOrderModal({ getDatas, company }) {
   });
 
 
+
   const carCategories = [
     {
-      name: "Standart",
-      value: "Standart",
+      name: "Start",
+      value: "Start",
     },
     {
       name: "Standart",
       value: "Standart",
     },
     {
-      name: "Standart",
-      value: "Standart",
+      name: "Premium",
+      value: "Premium",
     },
     {
-      name: "Standart",
-      value: "Standart",
+      name: "Luxury",
+      value: "Luxury",
     }
   ]
-
 
 
   return (
