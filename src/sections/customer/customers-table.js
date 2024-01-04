@@ -39,7 +39,9 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
+  return <Slide direction="up"
+ref={ref}
+{...props} />;
 });
 
 const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
@@ -79,7 +81,8 @@ const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
   
   return (
     <Card>
-      <AlertDialogSlide open={open} handleClose={handleClose} />
+      <AlertDialogSlide open={open}
+handleClose={handleClose} />
 
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
@@ -122,7 +125,7 @@ const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
               )}
             </TableHead>
 
-            <TableBody>
+            <TableBody> 
               {items.map((customer) => {
                 // const createdAt = format(customer?.created_at, "dd/MM/yyyy");
 
@@ -152,7 +155,8 @@ const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
                         <TableCell>{customer.cost}</TableCell>
                       </TableRow>
                     ) : type === "webcars" ? (
-                      <TableRow hover key={customer._id}>
+                      <TableRow hover
+key={customer._id}>
                         <TableCell onClick={() => handleClickOpen(customer.images)}>
                           {!!customer.images && (
                             <Image
@@ -171,23 +175,31 @@ const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
                         <TableCell>{customer.from}</TableCell>
                         <TableCell>{customer.type}</TableCell>
                         <TableCell onClick={(e) => e.stopPropagation()}>
-                          <EditCarModal row={customer} route={`webcar`} getDatas={getDate} />
-                          <DeleteModal route={`/webcar/${customer._id}`} getDatas={getDate} />
+                          <EditCarModal row={customer}
+route={`webcar`}
+getDatas={getDate} />
+                          <DeleteModal route={`/webcar/${customer._id}`}
+getDatas={getDate} />
                         </TableCell>
                       </TableRow>
                     ) : type === "review" ? (
-                      <TableRow hover key={customer._id}>
+                      <TableRow hover
+key={customer._id}>
                         <TableCell>{customer.name}</TableCell>
                         <TableCell>{customer.body}</TableCell>
                         <TableCell>{customer.star}</TableCell>
                         <TableCell>{customer.lang}</TableCell>
                         <TableCell onClick={(e) => e.stopPropagation()}>
-                          <EditCompanyModal row={customer} route={`review`} getDatas={getDate} />
-                          <DeleteModal route={`/review/${customer._id}`} getDatas={getDate} />
+                          <EditCompanyModal row={customer}
+route={`review`}
+getDatas={getDate} />
+                          <DeleteModal route={`/review/${customer._id}`}
+getDatas={getDate} />
                         </TableCell>
                       </TableRow>
                     ) : (
-                      <TableRow hover key={customer._id}>
+                      <TableRow hover
+key={customer._id}>
                         <TableCell>
                           <Image
                             priority
@@ -203,7 +215,8 @@ const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
                         <TableCell>{customer.titleen}</TableCell>
                         {/* <TableCell>{createdAt}</TableCell> */}
                         <TableCell>
-                          <DeleteModal route={`banner/${customer._id}`} getDatas={getDate} />
+                          <DeleteModal route={`banner/${customer._id}`}
+getDatas={getDate} />
                         </TableCell>
                       </TableRow>
                     )}
