@@ -1,11 +1,13 @@
-import ChartBarIcon from '@heroicons/react/24/solid/ChartBarIcon';
-import CogIcon from "@heroicons/react/24/solid/ShoppingBagIcon";
+import ChartBarIcon from '@heroicons/react/24/solid/QuestionMarkCircleIcon';
+import CogIcon from "@heroicons/react/24/solid/CircleStackIcon";
 import CarIcon from "@heroicons/react/24/solid/TruckIcon";
-import PhoneIcon from "@heroicons/react/24/solid/DeviceTabletIcon";
+import PhoneIcon from "@heroicons/react/24/solid/DevicePhoneMobileIcon";
+import RadioIcon from "@heroicons/react/24/solid/RadioIcon";
+import Identification from "@heroicons/react/24/solid/IdentificationIcon";
 
 import UsersIcon from "@heroicons/react/24/solid/AdjustmentsVerticalIcon";
 
-import QueueListIcon from "@heroicons/react/24/solid/QueueListIcon";
+import QueueListIcon from "@heroicons/react/24/solid/ChatBubbleLeftEllipsisIcon";
 
 import { SvgIcon } from '@mui/material';
 import Content from "src/Localization/Content";
@@ -43,7 +45,7 @@ export function Items() {
       path: "/banners",
       icon: (
         <SvgIcon fontSize="small">
-          <UsersIcon />
+          <RadioIcon />
         </SvgIcon>
       ),
     },
@@ -52,7 +54,7 @@ export function Items() {
       path: "/faqs",
       icon: (
         <SvgIcon fontSize="small">
-          <CogIcon />
+          <ChartBarIcon />
         </SvgIcon>
       ),
     },
@@ -61,7 +63,7 @@ export function Items() {
       path: "/review",
       icon: (
         <SvgIcon fontSize="small">
-          <CogIcon />
+          <QueueListIcon />
         </SvgIcon>
       ),
     },
@@ -79,7 +81,7 @@ export function Items() {
       path: "/cars",
       icon: (
         <SvgIcon fontSize="small">
-          <CogIcon />
+          <CarIcon />
         </SvgIcon>
       ),
     },
@@ -88,7 +90,7 @@ export function Items() {
       path: "/admins",
       icon: (
         <SvgIcon fontSize="small">
-          <CogIcon />
+          <Identification />
         </SvgIcon>
       ),
     },

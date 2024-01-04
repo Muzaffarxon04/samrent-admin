@@ -97,7 +97,7 @@ export default function AddCompanyModal({ getDatas, type, subId }) {
         validationSchema: Yup.object({
             name: Yup.string().min(2).required("Name is required"),
             star: Yup.number().min(2).required("Star is required"),
-            body: Yup.string().min(2).required("Body is required"),
+            body: Yup.string().min(40).max(300).required("Body is required"),
         }),
 
 

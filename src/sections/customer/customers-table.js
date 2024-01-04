@@ -25,6 +25,23 @@ import { Scrollbar } from "src/components/scrollbar";
 import Content from "src/Localization/Content";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import { Swiper, SwiperSlide } from "swiper/react";
+import * as React from "react";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Slide from "@mui/material/Slide";
+import { Navigation, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
 
 export const CustomersTable = (props) => {
@@ -48,11 +65,22 @@ const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
 
  const { localization } = Content[lang];
 
+ const [open, setOpen] = React.useState(false);
+
+ const handleClickOpen = (images) => {
+   setOpen({ status: true, images });
+ };
+
+ const handleClose = () => {
+   setOpen({ status: false, images: [] });
+ };
 
   
   
   return (
     <Card>
+      <AlertDialogSlide open={open} handleClose={handleClose} />
+
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
@@ -75,7 +103,7 @@ const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
                   <TableCell>{localization.sidebar.type}</TableCell>
                   <TableCell>{localization.action}</TableCell>
                 </TableRow>
-              )  : type === "review" ? (
+              ) : type === "review" ? (
                 <TableRow>
                   <TableCell>{localization.table.name}</TableCell>
                   <TableCell>{localization.table.info}</TableCell>
@@ -122,23 +150,20 @@ const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
                         {type === "webcars" && <TableCell>{customer.from}</TableCell>}
                         <TableCell>{customer.type}</TableCell>
                         <TableCell>{customer.cost}</TableCell>
-                     
                       </TableRow>
                     ) : type === "webcars" ? (
                       <TableRow hover key={customer._id}>
-                        <TableCell>
-                          {!!customer.images &&
-                            customer?.images?.map((img, id) => (
-                              <Box key={id} display={"flex"} margin={0.3}>
-                                <b>{id + 1}) </b>
-                                <Image
-                                  src={BaseUrl + "/file/cars/" + img}
-                                  alt="img"
-                                  width={60}
-                                  height={60}
-                                />
-                              </Box>
-                            ))}
+                        <TableCell onClick={() => handleClickOpen(customer.images)}>
+                          {!!customer.images && (
+                            <Image
+                              priority
+                              src={BaseUrl + "/file/cars/" + customer.images[0]}
+                              alt="image"
+                              width={150}
+                              height={100}
+                              style={{ borderRadius: 10 }}
+                            />
+                          )}
                         </TableCell>
                         <TableCell>{customer.name}</TableCell>
                         <TableCell>{customer.title}</TableCell>
@@ -164,7 +189,8 @@ const BaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_BASEURL;
                     ) : (
                       <TableRow hover key={customer._id}>
                         <TableCell>
-                          <img
+                          <Image
+                            priority
                             src={BaseUrl + "/file/banners/" + customer?.image}
                             alt="image"
                             width={150}
@@ -215,3 +241,53 @@ CustomersTable.propTypes = {
   rowsPerPage: PropTypes.number,
   selected: PropTypes.array,
 };
+
+
+
+
+
+ function AlertDialogSlide({ handleClose, open }) {
+  // Assuming Transition is defined and imported elsewhere
+  // import Transition from '...';
+
+  return (
+    <React.Fragment>
+      <Dialog
+        open={open.status}
+        TransitionComponent={Transition} // Ensure Transition is correctly imported or defined
+        keepMounted
+        onClose={handleClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogContent >
+          {open.images && (
+            <Swiper
+              style={{ width:"100%", height:"100%"}}
+              // width={550}
+              modules={[Navigation]} // Add Navigation and Pagination modules
+              navigation // Enable navigation arrows
+           
+              spaceBetween={30}
+              slidesPerView={1}
+            >
+              {open.images.map((image, index) => (
+                <SwiperSlide key={index} >
+                  <Image
+                    width={500}
+                    height={400}
+                    src={`${BaseUrl}/file/cars/${image}`}
+                    alt={`Car ${index + 1}`}
+                    style={{ width: "100%", height: "350px" }} // Adjust size as needed
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Close</Button>
+        </DialogActions>
+      </Dialog>
+    </React.Fragment>
+  );
+}
